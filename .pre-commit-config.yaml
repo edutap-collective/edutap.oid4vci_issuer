@@ -1,0 +1,49 @@
+ci:
+    autofix_prs: false
+    autoupdate_schedule: monthly
+    skip: [check-manifest, pyroma, ty]
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+    - id: check-ast
+    - id: check-json
+    - id: check-toml
+    - id: debug-statements
+    - id: check-case-conflict
+    - id: check-docstring-first
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.1
+    hooks:
+    -   id: ruff
+        args: [--fix]
+    -   id: ruff-format
+-   repo: local
+    hooks:
+    -   id: ty
+        name: ty type check
+        entry: make typecheck
+        language: system
+        types: [python]
+        pass_filenames: false
+-   repo: https://github.com/codespell-project/codespell
+    rev: v2.4.3
+    hooks:
+    -   id: codespell
+        additional_dependencies:
+          - tomli
+-   repo: https://github.com/mgedmin/check-manifest
+    rev: "0.51"
+    hooks:
+    -   id: check-manifest
+-   repo: https://github.com/regebro/pyroma
+    rev: "5.1b1"
+    hooks:
+    -   id: pyroma
+-   repo: https://github.com/mgedmin/check-python-versions
+    rev: "0.24.2"
+    hooks:
+    -   id: check-python-versions
+        args: ['--only', 'pyproject.toml']

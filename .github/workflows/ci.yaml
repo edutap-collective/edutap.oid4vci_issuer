@@ -1,0 +1,53 @@
+# The CI calls the same Make targets as a developer does locally. Repeating the
+# commands here instead would let the two drift, and that only shows up when CI
+# passes something that would have been red on a laptop.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Nothing here is locked: uv.lock is git-ignored and every requirement is a
+  # lower bound. A suite that passed last week can fail today with nothing
+  # changed here, and a weekly run is what notices.
+  schedule:
+    - cron: "41 5 * * 1"
+  # Callable, so a release workflow can run *these* checks rather than a copy.
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests on Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    env:
+      # uv honours this, so `make test-local` needs no matrix-specific flags
+      UV_PYTHON: ${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - run: make test-local
+
+  quality:
+    name: Linters and type check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+      - run: make lint
+      - run: make typecheck

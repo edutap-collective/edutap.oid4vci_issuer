@@ -1,0 +1,62 @@
+_version.py
+# Generated from:
+# https://github.com/plone/meta/tree/master/config/default
+# See the inline comments on how to expand/tweak this configuration file
+# python related
+*.egg-info
+*.pyc
+*.pyo
+
+# translation related
+*.mo
+
+# tools related
+build/
+.coverage
+coverage.xml
+dist/
+docs/_build
+__pycache__/
+.tox
+.vscode/
+node_modules/
+sandbox/
+
+# venv / buildout related
+bin/
+develop-eggs/
+eggs/
+.eggs/
+etc/
+.installed.cfg
+include/
+lib/
+lib64
+.mr.developer.cfg
+parts/
+pyvenv.cfg
+var/
+
+# mxdev
+/instance/
+/.make-sentinels/
+/*-mxdev.txt
+/reports/
+/sources/
+/venv/
+/.venv/
+.installed.txt
+
+/.env
+/*.json
+
+/_generated/
+
+/token*.txt
+/card-*.txt
+/card-*.svg
+/card-*.png
+
+# uv lockfile — this is a library, consumers resolve their own versions from
+# the ranges in pyproject.toml rather than from ours.
+uv.lock
