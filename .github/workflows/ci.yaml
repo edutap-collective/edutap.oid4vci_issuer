@@ -30,7 +30,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        # Must match requires-python in pyproject.toml. This service is not a
+        # library: it runs on the interpreter its image carries, so testing
+        # versions it declares no support for buys nothing and only breaks CI.
+        # 3.12 is the floor we declare; 3.14 is what actually runs here.
+        # Both ends get tested, and the one in between comes along cheaply.
+        python-version: ["3.12", "3.13", "3.14"]
     env:
       # uv honours this, so `make test-local` needs no matrix-specific flags
       UV_PYTHON: ${{ matrix.python-version }}

@@ -46,4 +46,8 @@ repos:
     rev: "0.24.2"
     hooks:
     -   id: check-python-versions
+        # Only pyproject.toml. It does not read the CI matrix, so the
+        # disagreement that made this repository's first pipeline red -- a
+        # matrix inherited from another package -- is not something this hook
+        # can catch. Tried and verified, rather than assumed.
         args: ['--only', 'pyproject.toml']

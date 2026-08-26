@@ -2,7 +2,7 @@
 #
 # Two stages so the build tooling stays out of the image that ships. The
 # runtime carries the installed package and nothing that built it.
-FROM python:3.13-slim AS build
+FROM python:3.14-slim AS build
 
 # hatch-vcs derives the version by asking git, so the build stage needs both
 # the binary and the history. Passing a version in as a build argument would
@@ -20,7 +20,7 @@ COPY src /app/src
 RUN pip install --no-cache-dir build \
     && python -m build --wheel --outdir /dist
 
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 ARG HTTP_PORT=8000
 ENV HTTP_PORT=${HTTP_PORT} \
