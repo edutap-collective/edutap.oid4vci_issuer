@@ -4,10 +4,15 @@
 # runtime carries the installed package and nothing that built it.
 FROM python:3.13-slim AS build
 
+# hatch-vcs derives the version by asking git, so the build stage needs both
+# the binary and the history. Passing a version in as a build argument would
+# work too, and would read 0.0.0 the first time somebody forgot it.
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y git \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# hatch-vcs reads the version from git, so the metadata has to be there when
-# the wheel is built. Without it the build fails rather than guessing.
 COPY .git /app/.git
 COPY pyproject.toml README.md /app/
 COPY src /app/src
