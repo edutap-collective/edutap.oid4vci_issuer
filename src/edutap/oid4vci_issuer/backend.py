@@ -70,12 +70,17 @@ class IssuerBackend:
         go with it.
         """
         settings = self.settings
+        # The endpoints are advertised as absolute URLs, so they need not sit
+        # under the identifier -- and usually should not, because the
+        # identifier only fixes where /.well-known/openid-credential-issuer
+        # is looked for.
+        base = (settings.endpoint_base_url or settings.credential_issuer).rstrip("/")
         return CredentialIssuerMetadata.model_validate(
             {
                 "credential_issuer": settings.credential_issuer,
-                "credential_endpoint": f"{settings.credential_issuer}/credential",
-                "nonce_endpoint": f"{settings.credential_issuer}/nonce",
-                "notification_endpoint": f"{settings.credential_issuer}/notification",
+                "credential_endpoint": f"{base}/credential",
+                "nonce_endpoint": f"{base}/nonce",
+                "notification_endpoint": f"{base}/notification",
                 "display": [{"name": settings.display_name, "locale": "en-US"}],
                 "credential_configurations_supported": {
                     settings.credential_configuration_id: {
