@@ -236,3 +236,55 @@ def test_a_missing_signing_key_fails_loudly(tmp_path):
 
     with pytest.raises(FileNotFoundError, match="do not verify"):
         create_app(settings=settings, claims=EmptyClaimsSource())
+
+
+def test_the_endpoints_sit_under_the_identifier_by_default(client):
+    metadata = client.get("/.well-known/openid-credential-issuer").json()
+
+    assert metadata["credential_endpoint"] == f"{ISSUER}/credential"
+
+
+def test_the_endpoints_can_live_somewhere_else_entirely(key_file):
+    """Only the metadata location derives from the identifier.
+
+    The identifier fixes where /.well-known/openid-credential-issuer is looked
+    for, and that path is shared with OIDC discovery, federation metadata, app
+    association files and ACME challenges. A deployment therefore maps one
+    exact path there and puts the endpoints under a prefix of its own.
+    """
+    path, _ = key_file
+    settings = Settings(
+        _env_file=None,
+        credential_issuer="https://login.example.edu",
+        endpoint_base_url="https://login.example.edu/public-api/wallet/oid4vci/v1",
+        vct=VCT,
+        signing_key_file=path,
+    )
+    client = TestClient(create_app(settings=settings, claims=DictClaims(CLAIMS)))
+
+    metadata = client.get("/.well-known/openid-credential-issuer").json()
+
+    assert metadata["credential_issuer"] == "https://login.example.edu"
+    assert metadata["credential_endpoint"] == (
+        "https://login.example.edu/public-api/wallet/oid4vci/v1/credential"
+    )
+    assert metadata["nonce_endpoint"].endswith("/oid4vci/v1/nonce")
+
+
+def test_a_trailing_slash_on_the_base_url_does_not_double(key_file):
+    path, _ = key_file
+    settings = Settings(
+        _env_file=None,
+        credential_issuer="https://login.example.edu",
+        endpoint_base_url="https://login.example.edu/oid4vci/",
+        vct=VCT,
+        signing_key_file=path,
+    )
+    client = TestClient(create_app(settings=settings, claims=DictClaims(CLAIMS)))
+
+    metadata = client.get("/.well-known/openid-credential-issuer").json()
+
+    assert (
+        metadata["credential_endpoint"]
+        == "https://login.example.edu/oid4vci/credential"
+    )

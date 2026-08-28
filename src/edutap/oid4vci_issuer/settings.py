@@ -32,6 +32,21 @@ class Settings(BaseSettings):
         ),
     )
 
+    endpoint_base_url: str = Field(
+        default="",
+        description=(
+            "Public base URL the protocol endpoints are reachable under. "
+            "Separate from credential_issuer on purpose: only the metadata "
+            "document's location derives from the identifier, and it lands in "
+            "/.well-known/ -- a namespace shared with OIDC discovery, "
+            "federation, app association files and ACME challenges. Routing "
+            "all of it to one service takes it from everyone else, so the "
+            "deployment maps one exact path there and puts the endpoints "
+            "somewhere of its own choosing. Empty means they sit directly "
+            "under the identifier."
+        ),
+    )
+
     credential_configuration_id: str = Field(
         default="StudentCredential",
         description="Key under which this credential is advertised in the metadata.",
