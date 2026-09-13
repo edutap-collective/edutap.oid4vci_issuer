@@ -40,7 +40,7 @@ jobs:
       # uv honours this, so `make test-local` needs no matrix-specific flags
       UV_PYTHON: ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
@@ -50,7 +50,7 @@ jobs:
     name: Linters and type check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
