@@ -34,7 +34,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # The build stage derives the version with hatch-vcs, which asks git.
           # A shallow checkout carries no tags, so the image would be numbered
